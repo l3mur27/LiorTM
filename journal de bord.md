@@ -11,3 +11,5 @@ J'ai regardé des vidéos sur Pygame et Matplotlib
 ## 27.02.2024
 
 J'ai refais le dépot sur git car il y avait un problème avec les "commit" et les "push"
+
+Je suis allé voir le cite officiel de Pygame - https://www.pygame.org/tags/3d
