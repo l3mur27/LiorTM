@@ -42,4 +42,44 @@ J'ai regardé une vidéo comment animé le graphe sur matplotlib et j'ai install
  ## 18.03.2024
 
  Je vais essayer de créé un Sprite qui peut bouger.
+
+## 20.03.2024
+
+J'ai une question à demander :
+ Comment faire bouger le sprite ?
+
+## 28.03.2024
+
+J'ai installé une nouvelle librairie "pygame_gui"
+pour pouvoir mettre des inputs
+
+
+## 04.04.2024
+J'ai regardé des videos sur la librarie pygame_gui 
+https://www.youtube.com/watch?v=kDSdjsdoGOY&t=453s
+
+
+## 10.04.2024
+
+J'ai fait des tests avec les inputs, j'ai eu des petits problèmes avec les "button"
+
+
+## 14.04.2024
+
+J'ai essayé de changer le fond d'écran après avoir mis le input et clicker sur enter 
+
+## 17.04.2024
+
+J'ai regardé des video comment créer angry birds avec python,
+peut être il y aurait des info utile pour mon projet 
+
+## 21.04.2024
+
+J'ai dessider quelles librairies je vais utiliser 
  
+ - pygame
+ - pygame_gui 
+ - math
+ - sys
+
+Pour le moment se sont les librairies que je trouve super pour mon projet

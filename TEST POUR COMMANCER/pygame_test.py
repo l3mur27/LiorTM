@@ -34,8 +34,12 @@ class Sprite(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (self.new_width, self.new_height))
         self.rect = self.image.get_rect()
 
+#def move(x, y):
+    
+
+
 #créé la balle de golf et diminue sa taille de 30%
-Golf_ball = Sprite("golf_ball.png", 0.3)
+Golf_ball = Sprite("golf_ball.png", 0.9)
 
 #permet de fermer le programme en appuyant sur la touche "esc"
 running = True
