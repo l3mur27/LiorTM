@@ -11,12 +11,39 @@ height = 500
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Ballistique 2D")
 
+
 #background
 
 gif_path = 'background/background_start.gif' 
 gif = pygame.image.load(gif_path)
 
 full_screen_gif = pygame.transform.scale(gif, (width, height))
+
+#sprites images
+
+red_ball = pygame.image.load("character/red_ball_2.png")
+ball_size = (100, 100)  # Set the size of the ball (width, height)
+red_ball = pygame.transform.scale(red_ball, ball_size)
+ball = red_ball.get_rect()
+ball.center = ((width //2 , height // 2))
+
+#class pour le projectile
+
+class Projectile(pygame.sprite.Sprite):
+    def __init__(self, ball_image, width, height):
+        super().__init__()
+        self.image = ball_image
+        self.rect = self.image.get_rect()
+        self.rect.center = (width // 2, height // 2)
+
+    def update(self):
+        self.rect.y += gravity
+
+
+# Create a sprite group
+all_sprites = pygame.sprite.Group()
+ball = Projectile(red_ball, width, height)
+all_sprites.add(ball)
 
 
 #les variables pour le vol du projectile
@@ -28,10 +55,11 @@ y_start = ""
 
 #constante de gravité
 
-g = 9,81
+gravity = 9.81
 
 #variable de pygame_gui
 
+fps = 60
 clock = pygame.time.Clock()
 manager = pygame_gui.UIManager((width, height))
 
@@ -46,9 +74,16 @@ def main_window():
                 pygame.quit()
                 sys.exit()
 
-        screen.fill("lime")
+        # Update
+        all_sprites.update()
 
-        pygame.display.update()
+        # Draw
+        screen.fill("black")
+        all_sprites.draw(screen)
+        pygame.display.flip()
+
+        #framaes update
+        clock.tick(fps)
 
 
 
@@ -73,3 +108,4 @@ def user_fly_info():
         pygame.display.update()
 
 user_fly_info()
+
