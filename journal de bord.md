@@ -83,3 +83,7 @@ J'ai dessider quelles librairies je vais utiliser
  - sys
 
 Pour le moment se sont les librairies que je trouve super pour mon projet
+
+# 01.05.2024
+
+J'ai réussi de faire tomber la balle à cause de la force de gravité
