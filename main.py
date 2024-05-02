@@ -2,6 +2,7 @@ import sys
 import pygame
 import pygame_gui
 import imageio
+import math
 
 pygame.init()
 
@@ -35,12 +36,24 @@ class Projectile(pygame.sprite.Sprite):
         self.image = ball_image
         self.rect = self.image.get_rect()
         self.rect.center = (width // 2, height // 2)
+        self.start_time = pygame.time.get_ticks() / 1000
+
+    # une fonction qui fait bouger l'objet grace à l'équation horraire
 
     def update(self):
-        self.rect.y += gravity
+
+        time = pygame.time.get_ticks() / 1000
+        fly_time = time - self.start_time
+
+        self.rect.y = (0.5 * gravity * (fly_time ** 2))
+
+        #self.rect.y = (- 0.5 * gravity * (fly_time ** 2) + (math.sin(math.degrees(30) * 30 * fly_time )))
+        #self.rect.x = ( math.cos(math.degrees(30)) * 30 * fly_time ) 
+        
 
 
-# Create a sprite group
+# Créé un groupe pour le sprite
+
 all_sprites = pygame.sprite.Group()
 ball = Projectile(red_ball, width, height)
 all_sprites.add(ball)
@@ -77,7 +90,7 @@ def main_window():
         # Update
         all_sprites.update()
 
-        # Draw
+        # Dessine
         screen.fill("black")
         all_sprites.draw(screen)
         pygame.display.flip()

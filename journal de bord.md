@@ -87,3 +87,11 @@ Pour le moment se sont les librairies que je trouve super pour mon projet
 # 01.05.2024
 
 J'ai réussi de faire tomber la balle à cause de la force de gravité
+
+# 02.05.2024
+
+J'ai regardé sur le site officiel de pygame le code pour pouvoir ajouter le temps dans l'equation horraire
+Encore j'ai regardé des exemples sur git
+
+ - https://www.pygame.org/docs/ref/time.html
+ - https://github.com/search?q=pygame.time.get_ticks+language%3APython&type=Code&l=Python
