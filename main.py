@@ -47,18 +47,20 @@ class Projectile(pygame.sprite.Sprite):
         self.movement(dt)
 
         # on affiche la balle au nouvel emplacement
+        
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
 
     def movement(self, dt):
         # Mise à jour de la vitesse
         # v = v0 + a * t
+
         self.vit[0] += self.acc[0] * dt  # mise à jour de la vitesse en X
         self.vit[1] += self.acc[1] * dt  # mise à jour de la vitesse en Y
 
         # Mise à jour de la position
         # x = x0 + v * t + 0.5 * a * t^2
-        # Note: La contribution de 0.5 * a * t^2 est généralement petite pour des petits dt et est souvent omise dans les simulations basiques
+
         self.pos[0] += self.vit[0] * dt  # mise à jour de la position en X
         self.pos[1] += self.vit[1] * dt  # mise à jour de la position en Y
 
