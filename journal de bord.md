@@ -95,3 +95,29 @@ Encore j'ai regardé des exemples sur git
 
  - https://www.pygame.org/docs/ref/time.html
  - https://github.com/search?q=pygame.time.get_ticks+language%3APython&type=Code&l=Python
+
+ # 03.05.2024 - 21.05.2024
+
+ Je me preparais pour les exams 
+
+ # 22.05.2024
+
+ J'ai vu une vidéo sur la mécanique newtonienne et j'ai regardé comment l'integrer dans python
+
+ - https://youtu.be/wKM_SlAMjQA?si=M8bB4c69oA9aOUuB 
+ - 
+ - https://youtu.be/Y4xlUNfrvow
+ 
+
+
+ # 25.05.2024
+
+J'ai changé mes équation et j'ai fait 3 vecteurs
+
+- Vitesse 
+- Position 
+- Accélération 
+
+ # 28.05.2024
+
+ J'ai réussi à donner l'angle que l'utilisateur a mit dans le input
