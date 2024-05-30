@@ -35,7 +35,6 @@ class Projectile(pygame.sprite.Sprite):
         self.rect.center = (width // 2, height // 2)
         self.start_time = pygame.time.get_ticks() / 1000
 
-#00
         ppx_par_metre = 100
 
         self.pos = [width // 2, height // 2]
@@ -47,7 +46,7 @@ class Projectile(pygame.sprite.Sprite):
         self.movement(dt)
 
         # on affiche la balle au nouvel emplacement
-        
+
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
 
@@ -64,7 +63,6 @@ class Projectile(pygame.sprite.Sprite):
         self.pos[0] += self.vit[0] * dt  # mise à jour de la position en X
         self.pos[1] += self.vit[1] * dt  # mise à jour de la position en Y
 
-#00
 
 # Créé un groupe pour le sprite
 all_sprites = pygame.sprite.Group()
