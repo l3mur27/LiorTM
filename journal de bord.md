@@ -121,3 +121,32 @@ J'ai changé mes équation et j'ai fait 3 vecteurs
  # 28.05.2024
 
  J'ai réussi à donner l'angle que l'utilisateur a mit dans le input
+
+ # 02.06.2024 
+
+ J'ai eu des soucis avec des multiples inputs comme (speed)  
+ Mais j'ai trouvé les erreurs 
+
+ # 06.06.2024
+
+ J'ai essayé de ajouter une fonction qui calcule l'atterissage en réel (hors la simulation)
+ Mais j'ai pas réussi 
+
+ # 15.06.2024
+
+ J'ai trouvé une vidéo sur Youtube qui parle d'une librairie comme pygame_gui
+ - https://youtu.be/XzE-587QupY?si=URXPe5-_rCY4CriY
+
+ # 18.06.2024
+
+ J'ai changé pygame_gui avec dear_pygui qui a facilité la chose,
+ il beaucoup plus facile à utiliser et j'ai réussi a mettre tout les inputs
+ et aussi j'ai réussi à mettre une fonction qui calcule l'endroit d'atterissage 
+
+ # 20.06.2024
+
+ - https://youtu.be/ARt6DLP38-Y?si=IVmBkFoSrls4Mceh
+ Une video pour crée un fond écran infini
+
+ - https://youtu.be/Quv0ryNF4pQ?si=fRCizSmlWY_3mFVa
+ Camera qui suit le projectile 
