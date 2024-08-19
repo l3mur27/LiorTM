@@ -150,3 +150,19 @@ J'ai changé mes équation et j'ai fait 3 vecteurs
 
  - https://youtu.be/Quv0ryNF4pQ?si=fRCizSmlWY_3mFVa
  Camera qui suit le projectile 
+
+ # 02.07.2024
+
+ J'ai commancé à faire des recherches sur les trois élements
+ assez compliqué 
+ - La balle doit être toujours visible 
+ - le menu, pour qu'on ne devrait pas fermer tout le programme a chaque fois
+    et mettre les parametres dirrectement dans la simulation 
+ - un curseur pour voir a l'enmplacement de la balle à un moment exact
+
+ # 19.08.2024
+
+ J'ai finalement réussi de faire un menu.
+ J'ai changé de librairie de dearpy_gui à tkinter
+ pour une simple raison que pygame et dearpy_gui, ils gèrent les fenêtres 
+ et les boucles d'événements de manière différente.
