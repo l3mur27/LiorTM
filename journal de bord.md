@@ -166,3 +166,23 @@ J'ai changé mes équation et j'ai fait 3 vecteurs
  J'ai changé de librairie de dearpy_gui à tkinter
  pour une simple raison que pygame et dearpy_gui, ils gèrent les fenêtres 
  et les boucles d'événements de manière différente.
+
+ # 23.08.2024
+
+ J'ai réussi de faire le slider 
+ avec la distance de 0 à la distance où atterira la balle 
+
+ # 26.08.2024
+
+ J'ai fini le slider avec les paramètres de la distance horizontal et du temps
+ Il me reste de faire la partie qui dézoom l'écran quand la balle part assez loin 
+
+ # 30.08.2024
+
+ J'ai presque fini la rédaction de commentaire écrit
+ et j'ai fait une fonction qui donne les dimensions d'écran d'utilisatuer
+ et si la balle sort d'écran ça affiche "out"
+
+ # 02.09.2024
+
+ J'ai ajouté une variable rescale mais elle marche pas tout a fait 
