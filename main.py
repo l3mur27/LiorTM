@@ -19,6 +19,7 @@ ppx_par_metre = 30
 screen_width = 0 # Initialize as a int
 screen_height = 0
 rescale = []
+max_high = 0
 
 # Colors
 red = (255, 0, 0)
@@ -38,11 +39,19 @@ FONT = pygame.font.Font(None, 24)
 main_background_day_path = 'background/1.png'
 main_background_day = pygame.image.load(main_background_day_path)
 
-# Sprite images
+# Sprite images (Ball, stickman and House)
 red_ball = pygame.image.load("character/red_ball_2.png")
 ball_size = (13, 13)  # Set the size of the ball (width, height)
 red_ball = pygame.transform.scale(red_ball, ball_size)
 ball = red_ball.get_rect()
+
+stickman = pygame.image.load("character/stickman.png")
+stickman_size = (19, 54)
+stickman = pygame.transform.scale(stickman, stickman_size)  # Initial size
+
+house = pygame.image.load("character/house.png")
+house_size = (150, 150)
+house = pygame.transform.scale(house, house_size)  # Initial size
 
 class Slider:
     def __init__(self, pos: tuple, size: tuple, initial_val: float, min_val: int, max_val: int) -> None:
@@ -122,16 +131,23 @@ class Slider:
 class Projectile(pygame.sprite.Sprite):
     def __init__(self, ball_image, width, height, angle, speed):
         super().__init__()
-        self.image = ball_image
-        self.rect = self.image.get_rect()
+        self.original_image = ball_image  # Store the original image
+        self.image = self.original_image
+        self.rect = self.original_image.get_rect()
         self.rect.center = (width // 2, height // 2)
         self.start_time = pygame.time.get_ticks() / 1000
-
-        self.pos = [ball_size[1] + x_start * ppx_par_metre , (height - y_start * ppx_par_metre) - ball_size[1]]
-        self.vit = [speed * math.cos(math.radians(angle)) * ppx_par_metre, -(speed) * math.sin(math.radians(angle)) * ppx_par_metre]
-        self.acc = [0, gravity * ppx_par_metre]
-
         self.positions = []
+
+    def pos_vit_acc(self):
+        # Update the initial position based on the rescaled ball size
+
+        global x_start
+
+        x_start = 8
+
+        self.pos = [ball_size[1] + x_start * ppx_par_metre * rescale[0], (height - y_start * ppx_par_metre * rescale[0]) - ball_size[1]]
+        self.vit = [speed * math.cos(math.radians(angle)) * ppx_par_metre * rescale[0], -(speed) * math.sin(math.radians(angle)) * ppx_par_metre * rescale[0]]
+        self.acc = [0, gravity * ppx_par_metre * rescale[0]]
 
     def update(self):
         dt = 1 / 60  # deltaT is equal to 1 FPS
@@ -142,8 +158,7 @@ class Projectile(pygame.sprite.Sprite):
         self.rect.y = self.pos[1]
 
     def movement(self, dt):
-        # Update the velocity after the the fuction rescale
-
+        # Update the velocity after rescale
         self.vit[0] += self.acc[0] * dt  # Update velocity in X
         self.vit[1] += self.acc[1] * dt  # Update velocity in Y
 
@@ -151,8 +166,8 @@ class Projectile(pygame.sprite.Sprite):
         self.pos[0] += self.vit[0] * dt  # Update position in X
         self.pos[1] += self.vit[1] * dt  # Update position in Y
 
-        # Append(adds digits in matrice)
-        self.positions.append((self.pos[0] + (ball_size[1] / 2), self.pos[1] + (ball_size[1] / 2)))
+        # Append the new position, adjusted for the center of the ball
+        self.positions.append((self.pos[0] + (self.rect.width / 2), self.pos[1] + (self.rect.height / 2)))
 
         if self.pos[1] >= height - ball_size[1]:
             self.pos[1] = height - ball_size[1]
@@ -160,40 +175,72 @@ class Projectile(pygame.sprite.Sprite):
 
     def calculate_landing_position(self):
         # Calculate time of flight
-        time_of_flight = (2 * speed * math.sin(math.radians(angle))) / gravity
+        time_of_flight = abs((2 * speed * math.sin(math.radians(angle))) / gravity)
 
         # Calculate horizontal distance
         horizontal_distance = x_start + speed * math.cos(math.radians(angle)) * time_of_flight
         land_pos.append(horizontal_distance)
 
-        print(f"The projectile will land at x: {horizontal_distance:.3f} meters, y: 0.0 meters, and the fly time is: {time_of_flight:.3f} seconds")
+        self.highest_point()
 
+        print(f"The projectile will land at x: {horizontal_distance:.3f} meters, y: 0.0 meters, and the fly time is: {time_of_flight:.3f} seconds")
+        print(f"The highest point reached is: {max_high:.3f} meters")
+        
         self.rescale()  # Call rescale after calculating the landing position
 
-    # Function that rescales the screen and the ball (first executed function in this class)
     def rescale(self):
-        global screen_width, rescale
+        global screen_width, rescale, ball_size, screen_height
 
         # Gets the users screen width
         if screen_width == 0:
             screen_width = pygame.display.get_surface().get_width()
+            screen_height = pygame.display.get_surface().get_height()
 
-        # Convert the landing position from meters to pixels
+        # Convert the landing and highest positions from meters to pixels
         landing_position_in_pixels = land_pos[0] * ppx_par_metre
+        highest_position_in_pixels = max_high * ppx_par_metre
 
         # Print the users screen size
         print(f"Screen Width: {screen_width} pixels")
         
         # Check if the landing position is outside of the users default screen size
-        if landing_position_in_pixels >= screen_width:
-            print("out")
-            rescale.append(screen_width / landing_position_in_pixels)
-            print(rescale[0])
+        if landing_position_in_pixels >= screen_width and highest_position_in_pixels >= screen_height:
+            print("out horizontal and vertical")
+            rescale_factor = min((screen_height - 70) / highest_position_in_pixels, (screen_width - 70) / landing_position_in_pixels)
+            rescale.append(rescale_factor)
+            print("Rescale factor", rescale[0])
+        
+        elif landing_position_in_pixels >= screen_width:
+            print("out horizontal")
+            rescale.append((screen_width - 70) / landing_position_in_pixels)
+            print("Rescale factor", rescale[0])
+        
+        elif highest_position_in_pixels >= screen_height:
+            print("out vertical")
+            rescale.append((screen_height - 70) / highest_position_in_pixels)
+            print("Rescale factor", rescale[0])
+        
         else:
             print("in")
             rescale.append(1)
+            print("Rescale factor", rescale[0])
 
-    # Function that calculates the time at an exact horizontal distance 
+        if rescale:
+            # Adjust the ball size based on the rescale factor
+            ball_size = (int(15 * rescale[0]), int(15 * rescale[0]))
+
+            # Rescale the ball image based on the new ball size
+            self.image = pygame.transform.scale(self.original_image, ball_size)
+            self.rect = self.image.get_rect(center=self.rect.center)
+
+            # Scale the stickman and house images
+            global stickman, house
+            stickman = pygame.transform.scale(stickman, (int(stickman_size[0] * rescale[0]), int(stickman_size[1] * rescale[0])))
+            house = pygame.transform.scale(house, (int(house_size[0] * rescale[0]), int(house_size[1] * rescale[0])))
+
+            # Recalculate position, velocity, and acceleration with the new scale
+            self.pos_vit_acc()
+
     def time_at_x_position(self, x_pos):
         # Horizontal velocity (MRU)
         v_x = speed * math.cos(math.radians(angle))
@@ -202,12 +249,16 @@ class Projectile(pygame.sprite.Sprite):
         time_at_x = (x_pos - x_start) / v_x if v_x != 0 else float('None')  # Prevent division by zero
 
         return time_at_x
+    
+    def highest_point(self):
+        global max_high, speed, angle, gravity
+        max_high = (speed ** 2 * math.sin(math.radians(angle)) ** 2) / (2 * gravity)
+        return max_high
 
-    # Function that draws a red line behind the ball 
     def draw_a_red_line(self, screen):
         if len(self.positions) > 1:
             for i in range(len(self.positions) - 1):
-                pygame.draw.line(screen, red, self.positions[i], self.positions[i + 1], 2)
+                pygame.draw.line(screen, red, self.positions[i], self.positions[i+1], 2)
 
 # Create a group for the sprite
 all_sprites = pygame.sprite.Group()
@@ -262,7 +313,16 @@ def draw_menu(screen):
 
 # Function that launches the simulation 
 def start_simulation():
-    global angle, speed, x_start, y_start
+    global angle, speed, x_start, y_start, land_pos, screen_width, rescale, menu_active
+
+    # Reset variables
+    angle = 0.0
+    speed = 0.0
+    x_start = 0.0
+    y_start = 0.0
+    land_pos.clear()
+    rescale.clear()
+    menu_active = False
 
     # Try if the numeric values are entered correctly
     try:
@@ -270,12 +330,21 @@ def start_simulation():
         speed = float(speed_entry.get())
         x_start = float(x_start_entry.get())
         y_start = float(y_start_entry.get())
-        error_label.config(text="")
+
+        # Validate angle: It should be between -90 and 90 degrees
+        if not (-90 <= angle <= 90):
+            error_label.config(text="Invalid input. Angle must be between -90° and 90°.")
+            return  # Stop execution and show error
+
+        
+
+        error_label.config(text="")  # Clear the error if inputs are valid
         root.destroy()  # Close the Tkinter menu
-        pygame.display.quit()  # closes the previous pygame display
-        main_window() # Launches the main window
+        pygame.display.quit()  # Closes the previous pygame display
+        main_window()  # Launches the main window
+
     except ValueError:
-        error_label.config(text="Invalid input. Please enter numeric values.") # Shows you this in case of entering a wrong numeric value
+        error_label.config(text="Invalid input. Please enter numeric values.")  # Show this in case of entering a wrong numeric value
 
 # Open the Tkinter menu to enter values in it
 def open_menu():
@@ -330,14 +399,14 @@ def main_window():
     ball = Projectile(red_ball, width, height, angle, speed)
     all_sprites.add(ball)
     ball.calculate_landing_position()
-    
+
     # land_pos correct value
     if land_pos:
         max_value = land_pos[0]  # Set the max value 
     else:
         max_value = 100  # Default value if no landing position 
 
-    # Move the slider lower by changing the y-coordinate
+    # Makes the slider appear
     slider = Slider(pos=(width // 2, 150), size=(300, 20), initial_val=0, min_val=0, max_val=max_value)
 
     running = True
@@ -375,12 +444,17 @@ def main_window():
         # Update
         if not menu_active:  # Only update sprites if the menu is not active
             all_sprites.update()
-            
 
         # Draw
         screen.fill(black)
         screen.blit(main_background_day, (0, 0))
         all_sprites.draw(screen)
+
+        # Draw the stickman and the house at a fixed position
+        stickman_rect = stickman.get_rect(center=(20 * rescale[0], height - (25 * rescale[0])))  
+        screen.blit(stickman, stickman_rect)
+        house_rect = house.get_rect(center=(120 * rescale[0], height - (75 * rescale[0]) ))  
+        screen.blit(house, house_rect)
 
         # Draw the red line
         for sprite in all_sprites:
@@ -401,4 +475,6 @@ def main_window():
         # Frames update
         clock.tick(fps)
 
+
 open_menu()
+

@@ -9,12 +9,16 @@ pygame.init()
 width = 960
 height = 540
 
-angle = 0.0  # Initialize as float
-speed = 0.0  # Initialize as float
+angle = 0.0  # Initialize as float to be able to have a numeric value with a "," such as 0.5
+speed = 0.0  
 x_start = 0.0
 y_start = 0.0
 gravity = 9.81
 land_pos = []
+ppx_par_metre = 30
+screen_width = 0 # Initialize as a int
+screen_height = 0
+rescale = []
 
 # Colors
 red = (255, 0, 0)
@@ -31,37 +35,34 @@ pygame.font.init()
 FONT = pygame.font.Font(None, 24)
 
 # Background
-gif_path = 'background/background_start.gif'
-gif = pygame.image.load(gif_path)
-
 main_background_day_path = 'background/1.png'
 main_background_day = pygame.image.load(main_background_day_path)
 
 # Sprite images
 red_ball = pygame.image.load("character/red_ball_2.png")
-ball_size = (10, 10)  # Set the size of the ball (width, height)
+ball_size = (13, 13)  # Set the size of the ball (width, height)
 red_ball = pygame.transform.scale(red_ball, ball_size)
 ball = red_ball.get_rect()
-ball.center = (width // 2, height // 2)
 
 class Slider:
     def __init__(self, pos: tuple, size: tuple, initial_val: float, min_val: int, max_val: int) -> None:
         self.pos = pos
         self.size = size
-        self.hovered = False
-        self.grabbed = False
+        self.hovered = False # Initialize as False 
+        self.grabbed = False # Initialize as False 
 
         self.slider_left_pos = self.pos[0] - (size[0] // 2)
         self.slider_right_pos = self.pos[0] + (size[0] // 2)
         self.slider_top_pos = self.pos[1] - (size[1] // 2)
 
-        self.min = min_val
-        self.max = max_val
-        self.initial_val = (self.slider_right_pos - self.slider_left_pos) * initial_val  # Initial value as percentage
+        self.min = min_val # Sliders min value
+        self.max = max_val # Sliders max value
+        self.initial_val = (self.slider_right_pos - self.slider_left_pos) * initial_val  
 
         self.container_rect = pygame.Rect(self.slider_left_pos, self.slider_top_pos, self.size[0], self.size[1])
         self.button_rect = pygame.Rect(self.slider_left_pos + self.initial_val - 5, self.slider_top_pos, 10, self.size[1])
 
+    #The function to make the slider button move
     def move_slider(self, mouse_pos):
         pos = mouse_pos[0]
         if pos < self.slider_left_pos:
@@ -70,28 +71,34 @@ class Slider:
             pos = self.slider_right_pos
         self.button_rect.centerx = pos
 
+    #The function to change from False to True or the opposite when the button is hovered
     def hover(self, mouse_pos):
         if self.button_rect.collidepoint(mouse_pos):
             self.hovered = True
         else:
             self.hovered = False
 
+    #The function to check if the button was grabed
     def grab(self, mouse_pos):
         if self.button_rect.collidepoint(mouse_pos):
             self.grabbed = True
 
+    #The function to to check if the button is realesed 
     def release(self):
         self.grabbed = False
 
+    #The function that makes appear the slider 
     def render(self, screen):
         pygame.draw.rect(screen, dark_gray, self.container_rect)
         pygame.draw.rect(screen, button_state[self.hovered], self.button_rect)
 
+    #The function that calculates the position of the slider to get a value on top of it 
     def get_value(self):
         val_range = self.slider_right_pos - self.slider_left_pos - 1
         button_val = self.button_rect.centerx - self.slider_left_pos
         return (button_val / val_range) * (self.max - self.min) + self.min
 
+    #The function that calculates and displays  the time and the distance associated with the slider value 
     def update_distance_and_time(self, screen):
         # Get current slider value
         current_value = self.get_value()
@@ -100,7 +107,7 @@ class Slider:
         distance = current_value
         angle_rad = math.radians(angle)
         speed_x = speed * math.cos(angle_rad)
-        time_to_reach_x = distance / speed_x if speed_x != 0 else float('inf')
+        time_to_reach_x = distance / speed_x if speed_x != 0 else float('None')
 
         # Render distance and time
         distance_text = FONT.render(f"Distance: {distance:.2f} m", True, white)
@@ -120,9 +127,7 @@ class Projectile(pygame.sprite.Sprite):
         self.rect.center = (width // 2, height // 2)
         self.start_time = pygame.time.get_ticks() / 1000
 
-        ppx_par_metre = 25
-
-        self.pos = [ball_size[1] + x_start * ppx_par_metre, (height - y_start * ppx_par_metre) - ball_size[1]]
+        self.pos = [ball_size[1] + x_start * ppx_par_metre , (height - y_start * ppx_par_metre) - ball_size[1]]
         self.vit = [speed * math.cos(math.radians(angle)) * ppx_par_metre, -(speed) * math.sin(math.radians(angle)) * ppx_par_metre]
         self.acc = [0, gravity * ppx_par_metre]
 
@@ -137,7 +142,8 @@ class Projectile(pygame.sprite.Sprite):
         self.rect.y = self.pos[1]
 
     def movement(self, dt):
-        # Update the velocity
+        # Update the velocity after the the fuction rescale
+
         self.vit[0] += self.acc[0] * dt  # Update velocity in X
         self.vit[1] += self.acc[1] * dt  # Update velocity in Y
 
@@ -160,18 +166,44 @@ class Projectile(pygame.sprite.Sprite):
         horizontal_distance = x_start + speed * math.cos(math.radians(angle)) * time_of_flight
         land_pos.append(horizontal_distance)
 
+        print(f"The projectile will land at x: {horizontal_distance:.3f} meters, y: 0.0 meters, and the fly time is: {time_of_flight:.3f} seconds")
 
+        self.rescale()  # Call rescale after calculating the landing position
+
+    # Function that rescales the screen and the ball (first executed function in this class)
+    def rescale(self):
+        global screen_width, rescale
+
+        # Gets the users screen width
+        if screen_width == 0:
+            screen_width = pygame.display.get_surface().get_width()
+
+        # Convert the landing position from meters to pixels
+        landing_position_in_pixels = land_pos[0] * ppx_par_metre
+
+        # Print the users screen size
+        print(f"Screen Width: {screen_width} pixels")
+        
+        # Check if the landing position is outside of the users default screen size
+        if landing_position_in_pixels >= screen_width:
+            print("out")
+            rescale.append(screen_width / landing_position_in_pixels)
+            print(rescale[0])
+        else:
+            print("in")
+            rescale.append(1)
+
+    # Function that calculates the time at an exact horizontal distance 
     def time_at_x_position(self, x_pos):
-        # Horizontal velocity
+        # Horizontal velocity (MRU)
         v_x = speed * math.cos(math.radians(angle))
 
         # Calculate time at x position
-        time_at_x = (x_pos - x_start) / v_x if v_x != 0 else float('inf')  # Prevent division by zero
+        time_at_x = (x_pos - x_start) / v_x if v_x != 0 else float('None')  # Prevent division by zero
 
         return time_at_x
 
-        print(f"The projectile will land at x: {horizontal_distance:.3f} meters, y: 0.0 meters, and the fly time is: {time_of_flight:.3f} seconds")
-
+    # Function that draws a red line behind the ball 
     def draw_a_red_line(self, screen):
         if len(self.positions) > 1:
             for i in range(len(self.positions) - 1):
@@ -188,8 +220,10 @@ clock = pygame.time.Clock()
 menu_active = False
 menu_rects = (None, None)
 
+# Draws a esc menu 
 def draw_menu(screen):
     global menu_rects
+
     # Menu size
     menu_width = 300
     menu_height = 200
@@ -226,8 +260,11 @@ def draw_menu(screen):
     # Update menu_rects (Buttons)
     menu_rects = (exit_rect, restart_rect)
 
+# Function that launches the simulation 
 def start_simulation():
     global angle, speed, x_start, y_start
+
+    # Try if the numeric values are entered correctly
     try:
         angle = float(angle_entry.get())
         speed = float(speed_entry.get())
@@ -236,10 +273,11 @@ def start_simulation():
         error_label.config(text="")
         root.destroy()  # Close the Tkinter menu
         pygame.display.quit()  # closes the previous pygame display
-        main_window()
+        main_window() # Launches the main window
     except ValueError:
-        error_label.config(text="Invalid input. Please enter numeric values.")
+        error_label.config(text="Invalid input. Please enter numeric values.") # Shows you this in case of entering a wrong numeric value
 
+# Open the Tkinter menu to enter values in it
 def open_menu():
     global root, angle_entry, speed_entry, x_start_entry, y_start_entry, error_label
 
@@ -248,32 +286,36 @@ def open_menu():
 
     tk.Label(root, text="Enter the initial conditions for the projectile:").pack()
 
+    # Angle input
     tk.Label(root, text="Angle (degrees)").pack()
     angle_entry = tk.Entry(root)
     angle_entry.insert(0, "0.0")
     angle_entry.pack()
 
+    # Speed input
     tk.Label(root, text="Speed (m/s)").pack()
     speed_entry = tk.Entry(root)
     speed_entry.insert(0, "0.0")
     speed_entry.pack()
 
+    # X pos input
     tk.Label(root, text="Starting position axis X (m)").pack()
     x_start_entry = tk.Entry(root)
     x_start_entry.insert(0, "0.0")
     x_start_entry.pack()
 
+    # Y pos input
     tk.Label(root, text="Starting position axis Y (m)").pack()
     y_start_entry = tk.Entry(root)
     y_start_entry.insert(0, "0.0")
     y_start_entry.pack()
 
-    tk.Button(root, text="Start Simulation", command=start_simulation).pack(pady=10)
+    tk.Button(root, text="Start Simulation", command=start_simulation).pack(pady=10) # when the button pressed go to start_simulation 
 
     error_label = tk.Label(root, text="", fg="red")
     error_label.pack(pady=10)
 
-    root.mainloop()
+    root.mainloop() # starts the Tkinter event loop
 
 def main_window():
     global angle, speed, width, height, main_background_day, red_ball, menu_active, menu_rects, land_pos
@@ -289,11 +331,11 @@ def main_window():
     all_sprites.add(ball)
     ball.calculate_landing_position()
     
-    # Ensure land_pos has the correct value
+    # land_pos correct value
     if land_pos:
-        max_value = land_pos[0]  # Set the max value to the calculated landing position
+        max_value = land_pos[0]  # Set the max value 
     else:
-        max_value = 100  # Default value if no landing position is calculated yet
+        max_value = 100  # Default value if no landing position 
 
     # Move the slider lower by changing the y-coordinate
     slider = Slider(pos=(width // 2, 150), size=(300, 20), initial_val=0, min_val=0, max_val=max_value)
@@ -333,6 +375,7 @@ def main_window():
         # Update
         if not menu_active:  # Only update sprites if the menu is not active
             all_sprites.update()
+            
 
         # Draw
         screen.fill(black)
@@ -357,7 +400,5 @@ def main_window():
 
         # Frames update
         clock.tick(fps)
-
-
 
 open_menu()
