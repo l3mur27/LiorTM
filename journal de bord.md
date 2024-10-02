@@ -190,8 +190,13 @@ J'ai changé mes équation et j'ai fait 3 vecteurs
  # 03.09.2024
 
  J'ai presque réussi le rescale 
- J'ai aussi trouvé 2 bug 
+ J'ai aussi trouvé 2 bugs 
   - si je commence la simulation à une vitesse 0, en hauteur et en longueur par example 50,50
   la simulation ne redimensionne pas 
   - Si je met un angle négatif à la fin j'ai un temps et une distace négatif 
   qui n'est pas cohérant 
+ 
+ # 02.10.2024
+
+ J'ai fini de corriger tout les bugs
+ Normalement c'est la version finale du code
