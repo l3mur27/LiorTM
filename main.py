@@ -238,23 +238,23 @@ class Projectile(pygame.sprite.Sprite):
         # Check if the landing position is outside of the users default screen size 
         if landing_position_in_pixels >= screen_width and highest_position_in_pixels >= screen_height:
             print("out horizontal and vertical")
-            rescale_factor = min((screen_height - 70) / highest_position_in_pixels, (screen_width - 70) / landing_position_in_pixels)
+            rescale_factor = min((screen_height - 220) / highest_position_in_pixels, (screen_width - 220) / landing_position_in_pixels)
             rescale.append(rescale_factor)
             print("Rescale factor", rescale[0])
 
         elif x_start * ppx_par_metre >= screen_width:
             print("initially out horizontal")
-            rescale.append((screen_width - 70) / landing_position_in_pixels)
+            rescale.append((screen_width - 220) / landing_position_in_pixels)
             print("Rescale factor", rescale[0])
 
         elif landing_position_in_pixels >= screen_width:
             print("out horizontal")
-            rescale.append((screen_width - 70) / landing_position_in_pixels)
+            rescale.append((screen_width - 220) / landing_position_in_pixels)
             print("Rescale factor", rescale[0])
         
         elif highest_position_in_pixels >= screen_height:
             print("out vertical")
-            rescale.append((screen_height - 70) / highest_position_in_pixels)
+            rescale.append((screen_height - 220) / highest_position_in_pixels)
             print("Rescale factor", rescale[0])
 
         else:
